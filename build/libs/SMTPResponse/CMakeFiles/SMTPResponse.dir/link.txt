@@ -1,2 +1,0 @@
-/usr/bin/ar qc libSMTPResponse.a CMakeFiles/SMTPResponse.dir/src/SMTPResponse.cpp.o
-/usr/bin/ranlib libSMTPResponse.a

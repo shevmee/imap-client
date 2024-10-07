@@ -1,2 +1,0 @@
-/usr/bin/ar qc libSmartSocket.a CMakeFiles/SmartSocket.dir/src/SmartSocket.cpp.o
-/usr/bin/ranlib libSmartSocket.a

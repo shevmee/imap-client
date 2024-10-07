@@ -1,2 +1,0 @@
-/usr/bin/ar qc libMailMessage.a CMakeFiles/MailMessage.dir/src/MailAddress.cpp.o CMakeFiles/MailMessage.dir/src/MailAttachment.cpp.o CMakeFiles/MailMessage.dir/src/MailMessageBuilder.cpp.o CMakeFiles/MailMessage.dir/src/MailMessageFormatter.cpp.o
-/usr/bin/ranlib libMailMessage.a
