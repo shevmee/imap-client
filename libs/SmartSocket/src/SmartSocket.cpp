@@ -98,16 +98,13 @@ bool SmartSocket::AsyncWriteCoroutine(const string& data, asio::yield_context& y
 
     if (!m_ssl_enabled)
     {
-    std::cout<<"KORUTINA1"<<std::endl;
         asio::async_write(m_socket.next_layer(), asio::buffer(data), yield[ec]);
     } else
     {
-    std::cout<<"KORUTINA2"<<std::endl;
         asio::async_write(m_socket, asio::buffer(data), yield[ec]);
     };
 
     timer->cancel();
-    std::cout<<"KORUTINA"<<std::endl;
     return MethodsHandlers::HandleWrite(data, ec);
 };
 
@@ -147,8 +144,6 @@ ISXResponse::IMAPResponse SmartSocket::AsyncReadCoroutineI(asio::yield_context& 
     };
 
     timer->cancel();
-
-    std::cout<<"QWEQWE2"<<std::endl;
     
     return MethodsHandlers::HandleReadI(buffer, ec);
 };
@@ -286,11 +281,9 @@ ISXResponse::IMAPResponse MethodsHandlers::HandleReadI(
     boost::asio::streambuf& buffer
     , const boost::system::error_code& error_code)
 {
-    std::cout<<"ZXCZXC"<<std::endl;
-    std::istream is(&buffer);
-    std::stringstream response;
-    response<<is.rdbuf();
-    std::cout<<response.str()<<std::endl;
+
+    // response<<is.rdbuf();
+    // std::cout<<response.str()<<std::endl;
     if (error_code && error_code != boost::asio::error::operation_aborted)
     {
         HandleError("Reading error", error_code);
@@ -300,9 +293,13 @@ ISXResponse::IMAPResponse MethodsHandlers::HandleReadI(
     };
     if(!error_code)
     {
+        std::istream is(&buffer);
+        std::stringstream response;
+        response<<is.rdbuf();
+        std::cout<< "raw response: " << response.str() << " end of raw response"<<std::endl;
         ISXResponse::IMAPResponse imap_response(response.str());
         *s_log_stream << imap_response.get_formatted_response();
-        std::cout<<"OKOKOK1 "<<imap_response.get_formatted_response()<<std::endl;
+        // std::cout<<"OKOKOK1 "<<imap_response.get_formatted_response()<<std::endl;
         return imap_response;
     };
 

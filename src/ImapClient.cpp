@@ -53,7 +53,7 @@ future<void> ImapClient::AsyncConnect(const string& server, std::uint16_t port)
                 // Once SSL is established, read the server's greeting (IMAP servers send a greeting)
                 ISXResponse::IMAPResponse::CheckStatus(
                     m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
-                m_smart_socket->AsyncWriteCoroutine("a001 CAPABILITY", yield);
+                m_smart_socket->AsyncWriteCoroutine("A001 CAPABILITY\r\n", yield);
                 m_smart_socket->AsyncReadCoroutineI(yield);
                 promise.set_value();
             }
@@ -72,7 +72,7 @@ future<void> ImapClient::AsyncLogin(const string& username, const string& passwo
 {
     std::promise<void> promise;
     future<void> future = promise.get_future();
-    std::string temp = "a001";
+    std::string temp = "A002";
 
     m_username = username;
     m_password = password;
