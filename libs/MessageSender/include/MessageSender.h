@@ -15,7 +15,7 @@ class MessageSender
 public:
     MessageSender(const ISXMM::MailMessage& message, std::function<bool(const std::string&)> send);
 
-    bool SendMessage();
+    bool SendMess();
 private:
     static uint16_t inline S_FILE_CHUNK_SIZE = 72;
     ISXMM::MailMessage m_message;

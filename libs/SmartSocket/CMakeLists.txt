@@ -18,3 +18,13 @@ target_link_libraries(SmartSocket PUBLIC
     SMTPResponse
     ImapResponse
 )
+if(WIN32 AND MINGW)
+    message("Windows and mingw detected")
+    find_package(OpenSSL REQUIRED)
+
+    target_link_libraries(SmartSocket PUBLIC 
+        OpenSSL::SSL
+        OpenSSL::Crypto
+        ws2_32
+    )
+endif()

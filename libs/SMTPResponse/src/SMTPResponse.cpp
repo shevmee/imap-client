@@ -110,7 +110,7 @@ namespace ISXResponse
         return std::make_pair(response.substr(0, endline_pos), response.substr(std::min(endline_pos, response.size())));
     }
 
-    bool SMTPResponse::CodeEquals(u_int16_t code) const 
+    bool SMTPResponse::CodeEquals(uint16_t code) const 
     {
         return m_code == code;
     }

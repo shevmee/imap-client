@@ -6,7 +6,7 @@ namespace ISXMS
 MessageSender::MessageSender(const ISXMM::MailMessage& message, std::function<bool(const std::string&)> send)
     : m_message(message), m_send(send) {}
 
-bool MessageSender::SendMessage()
+bool MessageSender::SendMess()
 {
     return SendMailHeaders() &&
            SendMailBody() &&

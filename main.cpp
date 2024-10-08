@@ -30,7 +30,7 @@ int main()
     {
         // Connect and authenticate to the IMAP server
         imap_client->AsyncConnect("imap.gmail.com", 993).get();
-        imap_client->AsyncLogin("yehorfur@gmail.com", "\"bwhp mwfr utdv udcj\"").get();
+        imap_client->AsyncLogin("misharust2004@gmail.com", "\"mi$h0rUst41\"").get();
         std::cout<<"LOL"<<std::endl;
 
         // Select the INBOX folder
