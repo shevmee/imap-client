@@ -187,8 +187,8 @@ future<void> ImapClient::AsyncSearchMail(const string& criteria)
             try
             {
                 m_smart_socket->AsyncWriteCoroutine(query, yield);
-                ISXResponse::SMTPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveCompletion);
+                ISXResponse::IMAPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::PositiveCompletion);
 
                 AsyncSendSearchCmd(criteria, yield); // Now 'criteria' is captured
 

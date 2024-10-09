@@ -10,7 +10,6 @@
 #include <future>
 #include <iostream>
 
-#include "SMTPResponse.h"
 #include "ImapResponse.h"
 
 using namespace boost;
@@ -42,7 +41,7 @@ public:
 
     bool AsyncConnectCoroutine(const string& server, int port, asio::yield_context& yield);
     bool AsyncWriteCoroutine(const string& data, asio::yield_context& yield);
-    ISXResponse::SMTPResponse AsyncReadCoroutine(asio::yield_context& yield);
+    // ISXResponse::SMTPResponse AsyncReadCoroutine(asio::yield_context& yield);
     ISXResponse::IMAPResponse AsyncReadCoroutineI(asio::yield_context& yield);
     ISXResponse::IMAPResponse AsyncReadCoroutineIF(asio::yield_context& yield);
     bool AsyncUpgradeSecurityCoroutine(asio::yield_context& yield);
@@ -82,9 +81,9 @@ public:
         const string& data
         , const boost::system::error_code& error_code);
 
-    static ISXResponse::SMTPResponse HandleRead(
-        boost::asio::streambuf& buffer
-        , const boost::system::error_code& error_code);
+    // static ISXResponse::SMTPResponse HandleRead(
+    //     boost::asio::streambuf& buffer
+    //     , const boost::system::error_code& error_code);
 
     static ISXResponse::IMAPResponse HandleReadI(
         boost::asio::streambuf& buffer

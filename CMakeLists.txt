@@ -16,7 +16,6 @@ add_executable(client)
 
 # Specify source files
 target_sources(client PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/SmtpClient.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ImapClient.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
@@ -36,9 +35,6 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/Base64)
 # Add subdirectory for the SmartSocket library
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/SmartSocket)
 
-# Add subdirectory for the SMTPResponse library
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/SMTPResponse)
-
 # Add subdirectory for the ImapResponse library
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/ImapResponse)
 
@@ -48,9 +44,6 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/MailMessage)
 # Add subdirectory for the MessageSender library
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/MessageSender)
 
-# Add subdirectory for the tests
-add_subdirectory(tests)
-
 # Link libraries to the client target
 target_link_libraries(client PRIVATE
     OpenSSL::SSL
@@ -58,7 +51,6 @@ target_link_libraries(client PRIVATE
     SmartSocket
     Base64
     ${Boost_LIBRARIES}
-    SMTPResponse
     ImapResponse
     MailMessage
     MessageSender
