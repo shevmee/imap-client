@@ -7,10 +7,6 @@ namespace ISXResponse
         OK,
         NO,
         BAD,
-        PositiveCompletion,
-        PositiveIntermediate,
-        TransientNegative,
-        PermanentNegative,
         Undefined
     };
 } // namespace ISXResponse

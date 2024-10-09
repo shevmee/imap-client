@@ -58,8 +58,7 @@ namespace ISXResponse
             is_unsolicited = true;
         }
 
-        std::smatch matches;
-        
+        std::smatch matches;      
 
         // A regex pattern that matches an IMAP response: TAG STATUS TEXT
         std::regex imapResponsePattern(R"(^(\*|\w+)\s+(OK|NO|BAD|BYE|PREAUTH|FETCH|FLAGS|EXISTS|RECENT|LIST|SEARCH|CAPABILITY|[A-Z]+)?\s*(\((?:[^\(\)]*)\)|\[.*\]|[^\r\n]*)?\r?\n?)");
@@ -122,7 +121,7 @@ namespace ISXResponse
         {
             m_formatted_response.erase(m_formatted_response.end() - 3, m_formatted_response.end());
         }
-        //std::cout<<"TEST RESP "<<m_formatted_response<<std::endl;
+        // std::cout<<"TEST RESP "<<m_formatted_response<<std::endl;
     }
 
 

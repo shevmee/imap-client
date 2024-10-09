@@ -29,19 +29,17 @@ int main()
     try
     {
         // Connect and authenticate to the IMAP server
+        //imap_client->AsyncConnect("127.0.0.1", 2525).get();
         imap_client->AsyncConnect("imap.gmail.com", 993).get();
+        //imap_client->AsyncCapability();
         imap_client->AsyncLogin("misharust2004@gmail.com", "\"vssp dsoj swwg htol\"").get();
-        std::cout<<"LOL"<<std::endl;
-
         // Select the INBOX folder
         
         imap_client->AsyncSelectFolder("INBOX").get();
 
         // Fetch mail with index 1 (just as an example)
-        imap_client->AsyncFetchMail(1).get();
-
-        // // Optionally, search for specific emails
-        // imap_client->AsyncSearchMail("UNSEEN").get();
+        imap_client->AsyncFetchMail(2).get();
+        std::cout<<"LOL"<<std::endl;
 
         finish(io_context, worker, imap_client);
 

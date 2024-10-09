@@ -23,6 +23,8 @@ class ImapClient
 public:
     inline static const string S_CMD_LOGIN = "LOGIN";
     inline static const string S_CMD_LOGOUT = "LOGOUT";
+    inline static const string S_CMD_CAPABILITY = "CAPABILITY";
+    inline static const string S_CMD_BYE = "BYE";
     inline static const string S_CMD_SELECT = "SELECT";
     inline static const string S_CMD_FETCH = "FETCH";
     inline static const string S_CMD_STORE = "STORE";
@@ -39,8 +41,9 @@ public:
     future<void> AsyncLogin(const string& username, const string& password);
     future<void> AsyncSelectFolder(const string& folder);
     future<void> AsyncFetchMail(const std::uint32_t mail_index);
-    future<void> AsyncSearchMail(const string& criteria);
     future<void> AsyncLogout();
+    future<void> AsyncBye();
+    future<void> AsyncCapability();
 
     bool Reset();
     bool Dispose();
@@ -53,14 +56,17 @@ private:
     string m_username;
     string m_password;
     string m_current_folder;
+    string m_tag = "A000";
+
+    void IncrementTag();
 
     int m_timeout;
 
-    bool AsyncSendLoginCmd(asio::yield_context& yield);
+    bool AsyncSendLoginCmd(asio::yield_context& yield, const string& username, const string& password);
     bool AsyncSendLogoutCmd(asio::yield_context& yield);
+    bool AsyncSendByeCmd(asio::yield_context& yield);
+    bool AsyncSendCapabilityCmd(asio::yield_context& yield);
     bool AsyncSendSelectCmd(const string& folder, asio::yield_context& yield);
     bool AsyncSendFetchCmd(const std::uint32_t mail_index, asio::yield_context& yield);
-    bool AsyncSendSearchCmd(const string& criteria, asio::yield_context& yield);
-    bool AsyncSendNoopCmd(asio::yield_context& yield);
 };
 }; // namespace ISXIC

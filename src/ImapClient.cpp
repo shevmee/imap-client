@@ -44,17 +44,21 @@ future<void> ImapClient::AsyncConnect(const string& server, std::uint16_t port)
                 // Connect to the server (plain socket)
                 m_smart_socket->AsyncConnectCoroutine(server, port, yield);
                 
-                // m_smart_socket->AsyncWriteCoroutine("a001 CAPABILITY", yield);
+
+                // For our server
+                // m_smart_socket->AsyncWriteCoroutine("STARTTLS\r\n", yield);
                 // m_smart_socket->AsyncReadCoroutineI(yield);
 
-                // Start the SSL handshake immediately after connecting
-                m_smart_socket->AsyncUpgradeSecurityCoroutine(yield); // Ensure SSL handshake here
+                m_smart_socket->AsyncUpgradeSecurityCoroutine(yield); 
 
                 // Once SSL is established, read the server's greeting (IMAP servers send a greeting)
                 ISXResponse::IMAPResponse::CheckStatus(
                     m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
-                m_smart_socket->AsyncWriteCoroutine("A001 CAPABILITY\r\n", yield);
+                    
+                AsyncSendCapabilityCmd(yield);
+                IncrementTag();
                 m_smart_socket->AsyncReadCoroutineI(yield);
+
                 promise.set_value();
             }
             catch (...)
@@ -72,36 +76,26 @@ future<void> ImapClient::AsyncLogin(const string& username, const string& passwo
 {
     std::promise<void> promise;
     future<void> future = promise.get_future();
-    std::string temp = "A002";
 
     m_username = username;
     m_password = password;
 
-    std::string query = (boost::format("%1% %2% %3% %4% \r\n")
-        % temp
-        % S_CMD_LOGIN
-        % username
-        % password).str();
-
     asio::spawn(
         m_smart_socket->GetIoContext(),
-        [this, query, promise = std::move(promise)](asio::yield_context yield) mutable
+        [this, username, password, promise = std::move(promise)](asio::yield_context yield) mutable
         {
             try
             {
-                //m_smart_socket->AsyncWriteCoroutine("A001 CAPABILITY", yield);
-                //m_smart_socket->AsyncReadCoroutineI(yield);
-                m_smart_socket->AsyncWriteCoroutine(query, yield);
+                AsyncSendLoginCmd(yield, username, password);
                 ISXResponse::IMAPResponse::CheckStatus(
                     m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
-                //m_smart_socket->AsyncReadCoroutineI(yield);
+
+                IncrementTag();
                 promise.set_value();
             }
             catch (...)
             {
-                std::cerr<<"LOGIN ERROR"<<std::endl;
                 promise.set_exception(std::current_exception());
-                std::cerr<<"LOGIN ERROR2"<<std::endl;
             }
         }
     );
@@ -114,26 +108,24 @@ future<void> ImapClient::AsyncSelectFolder(const string& folder)
     std::promise<void> promise;
     future<void> future = promise.get_future();
 
-    std::string query = (boost::format("A003 SELECT %1%\r\n") % folder).str();
+    //std::string query = (boost::format("A003 SELECT %1%\r\n") % folder).str();
 
     asio::spawn(
         m_smart_socket->GetIoContext(),
-        [this, query, folder, promise = std::move(promise)](asio::yield_context yield) mutable
+        [this, folder, promise = std::move(promise)](asio::yield_context yield) mutable
         {
             try
             {
-                AsyncSendSelectCmd(folder, yield); // Now 'folder' is captured
+                AsyncSendSelectCmd(folder, yield);
 
-                // m_smart_socket->AsyncWriteCoroutine(query, yield);
                 ISXResponse::IMAPResponse::CheckStatus(
                     m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
 
-
+                IncrementTag();
                 promise.set_value();
             }
             catch (...)
             {
-                std::cerr<<"ERROR SELECTFOLDER"<<std::endl;
                 promise.set_exception(std::current_exception());
             }
         }
@@ -147,20 +139,17 @@ future<void> ImapClient::AsyncFetchMail(const std::uint32_t mail_index)
     std::promise<void> promise;
     future<void> future = promise.get_future();
 
-    std::string query = (boost::format("A004 %1% %2% BODY[]\r\n")
-        % S_CMD_FETCH
-        % mail_index).str();
-
     asio::spawn(
         m_smart_socket->GetIoContext(),
-        [this, query, promise = std::move(promise), mail_index](asio::yield_context yield) mutable
+        [this, promise = std::move(promise), mail_index](asio::yield_context yield) mutable
         {
             try
             {
                 AsyncSendFetchCmd(mail_index, yield);
                 ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineIF(yield), ISXResponse::StatusType::OK);
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
 
+                IncrementTag();
                 promise.set_value();
             }
             catch (...)
@@ -172,38 +161,6 @@ future<void> ImapClient::AsyncFetchMail(const std::uint32_t mail_index)
 
     return future;
 }
-
-future<void> ImapClient::AsyncSearchMail(const string& criteria)
-{
-    std::promise<void> promise;
-    future<void> future = promise.get_future();
-
-    std::string query = (boost::format("SEARCH %1%\r\n") % criteria).str();
-
-    asio::spawn(
-        m_smart_socket->GetIoContext(),
-        [this, query, criteria, promise = std::move(promise)](asio::yield_context yield) mutable
-        {
-            try
-            {
-                m_smart_socket->AsyncWriteCoroutine(query, yield);
-                ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::PositiveCompletion);
-
-                AsyncSendSearchCmd(criteria, yield); // Now 'criteria' is captured
-
-                promise.set_value();
-            }
-            catch (...)
-            {
-                promise.set_exception(std::current_exception());
-            }
-        }
-    );
-
-    return future;
-}
-
 
 future<void> ImapClient::AsyncLogout()
 {
@@ -231,6 +188,84 @@ future<void> ImapClient::AsyncLogout()
     return future;
 }
 
+future<void> ImapClient::AsyncCapability()
+{
+    std::promise<void> promise;
+    future<void> future = promise.get_future();
+
+    asio::spawn(
+        m_smart_socket->GetIoContext(),
+        [this, promise = std::move(promise)](asio::yield_context yield) mutable
+        {
+            try
+            {
+                AsyncSendCapabilityCmd(yield);
+                ISXResponse::IMAPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                    
+                IncrementTag();
+                promise.set_value();
+            }
+            catch (...)
+            {
+                promise.set_exception(std::current_exception());
+            }
+        }
+    );
+
+    return future;
+}
+
+future<void> ImapClient::AsyncBye()
+{
+    std::promise<void> promise;
+    future<void> future = promise.get_future();
+
+    asio::spawn(
+        m_smart_socket->GetIoContext(),
+        [this, promise = std::move(promise)](asio::yield_context yield) mutable
+        {
+            try
+            {
+                AsyncSendByeCmd(yield);
+                ISXResponse::IMAPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                promise.set_value();
+            }
+            catch (...)
+            {
+                promise.set_exception(std::current_exception());
+            }
+        }
+    );
+
+    return future;
+}
+
+void ImapClient::IncrementTag(){
+    std::string letter_part(1, m_tag[0]);
+    std::string number_part = m_tag.substr(1);
+
+    int number = 0;
+    for (char c : number_part) {
+        number = number * 10 + (c - '0');
+    }
+
+    number++;
+
+    if (number > 999) {
+        number = 0;
+        letter_part[0]++;
+    }
+
+    std::string new_number_part = std::to_string(number);
+    while (new_number_part.length() < number_part.length()) {
+        new_number_part = '0' + new_number_part;
+    }
+
+    m_tag = letter_part + new_number_part;
+}
+
 bool ImapClient::Reset()
 {
     m_smart_socket = std::make_unique<ISXSmartSocket::SmartSocket>(
@@ -254,25 +289,47 @@ bool ImapClient::SetTimeout(int timeout)
     return m_smart_socket->SetTimeout(timeout);
 }
 
-bool ImapClient::AsyncSendLoginCmd(asio::yield_context& yield)
+bool ImapClient::AsyncSendLoginCmd(asio::yield_context& yield, const string& username, const string& password)
 {
     std::string query = (boost::format("%1% %2% %3% %4% \r\n")
-        % "a001"
+        % m_tag
         % S_CMD_LOGIN
-        % m_username
-        % m_password).str();
+        % username
+        % password).str();
 
     return m_smart_socket->AsyncWriteCoroutine(query, yield);
 }
 
 bool ImapClient::AsyncSendLogoutCmd(asio::yield_context& yield)
 {
-    return m_smart_socket->AsyncWriteCoroutine(S_CMD_LOGOUT + "\r\n", yield);
+    std::string query = (boost::format("%1% %2% \r\n")
+        % m_tag
+        % S_CMD_LOGOUT).str();
+
+    return m_smart_socket->AsyncWriteCoroutine(query, yield);
+}
+
+bool ImapClient::AsyncSendByeCmd(asio::yield_context& yield)
+{
+    std::string query = (boost::format("%1% %2% \r\n")
+        % m_tag
+        % S_CMD_BYE).str();
+
+    return m_smart_socket->AsyncWriteCoroutine(query, yield);
+}
+
+bool ImapClient::AsyncSendCapabilityCmd(asio::yield_context& yield)
+{
+    std::string query = (boost::format("%1% %2% \r\n")
+        % m_tag
+        % S_CMD_CAPABILITY).str();
+    return m_smart_socket->AsyncWriteCoroutine(query, yield);
 }
 
 bool ImapClient::AsyncSendSelectCmd(const string& folder, asio::yield_context& yield)
 {
-    std::string query = (boost::format("A003 %1% %2%\r\n")
+    std::string query = (boost::format("%1% %2% %3%\r\n")
+        % m_tag
         % S_CMD_SELECT
         % folder).str();
 
@@ -281,24 +338,12 @@ bool ImapClient::AsyncSendSelectCmd(const string& folder, asio::yield_context& y
 
 bool ImapClient::AsyncSendFetchCmd(const std::uint32_t mail_index, asio::yield_context& yield)
 {
-    std::string query = (boost::format("A004 %1% %2% BODY[]\r\n")
+    std::string query = (boost::format("%1% %2% %3% BODY[]\r\n")
+        % m_tag
         % S_CMD_FETCH
         % mail_index).str();
 
     return m_smart_socket->AsyncWriteCoroutine(query, yield);
 }
 
-bool ImapClient::AsyncSendSearchCmd(const string& criteria, asio::yield_context& yield)
-{
-    std::string query = (boost::format("%1% %2% \r\n")
-        % S_CMD_SEARCH
-        % criteria).str();
-
-    return m_smart_socket->AsyncWriteCoroutine(query, yield);
-}
-
-bool ImapClient::AsyncSendNoopCmd(asio::yield_context& yield)
-{
-    return m_smart_socket->AsyncWriteCoroutine(S_CMD_NOOP + "\r\n", yield);
-}
 }; // namespace ISXIC
