@@ -29,7 +29,7 @@ int main()
     try
     {
         // Connect and authenticate to the IMAP server
-        imap_client->AsyncConnect("imap.gmail.com", 993).get();
+        imap_client->AsyncConnect("localhost", 2525).get();
         imap_client->AsyncLogin("misharust2004@gmail.com", "\"vssp dsoj swwg htol\"").get();
         std::cout<<"LOL"<<std::endl;
 
@@ -40,6 +40,8 @@ int main()
         // // Fetch mail with index 1 (just as an example)
         // imap_client->AsyncFetchMail(1).get();
 
+
+        //mb
         // // Optionally, search for specific emails
         // imap_client->AsyncSearchMail("UNSEEN").get();
 

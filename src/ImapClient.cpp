@@ -44,8 +44,8 @@ future<void> ImapClient::AsyncConnect(const string& server, std::uint16_t port)
                 // Connect to the server (plain socket)
                 m_smart_socket->AsyncConnectCoroutine(server, port, yield);
                 
-                // m_smart_socket->AsyncWriteCoroutine("a001 CAPABILITY", yield);
-                // m_smart_socket->AsyncReadCoroutineI(yield);
+                m_smart_socket->AsyncWriteCoroutine("STARTTLS\r\n", yield);
+                m_smart_socket->AsyncReadCoroutineI(yield);
 
                 // Start the SSL handshake immediately after connecting
                 m_smart_socket->AsyncUpgradeSecurityCoroutine(yield); // Ensure SSL handshake here
