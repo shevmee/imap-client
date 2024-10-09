@@ -114,7 +114,7 @@ future<void> ImapClient::AsyncSelectFolder(const string& folder)
     std::promise<void> promise;
     future<void> future = promise.get_future();
 
-    std::string query = (boost::format("SELECT %1%\r\n") % folder).str();
+    std::string query = (boost::format("A003 SELECT %1%\r\n") % folder).str();
 
     asio::spawn(
         m_smart_socket->GetIoContext(),
@@ -122,11 +122,12 @@ future<void> ImapClient::AsyncSelectFolder(const string& folder)
         {
             try
             {
-                m_smart_socket->AsyncWriteCoroutine(query, yield);
+                AsyncSendSelectCmd(folder, yield); // Now 'folder' is captured
+
+                // m_smart_socket->AsyncWriteCoroutine(query, yield);
                 ISXResponse::IMAPResponse::CheckStatus(
                     m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
 
-                AsyncSendSelectCmd(folder, yield); // Now 'folder' is captured
 
                 promise.set_value();
             }
@@ -146,7 +147,7 @@ future<void> ImapClient::AsyncFetchMail(const std::uint32_t mail_index)
     std::promise<void> promise;
     future<void> future = promise.get_future();
 
-    std::string query = (boost::format("%1% %2% BODY[] \r\n")
+    std::string query = (boost::format("A004 %1% %2% BODY[]\r\n")
         % S_CMD_FETCH
         % mail_index).str();
 
@@ -158,7 +159,7 @@ future<void> ImapClient::AsyncFetchMail(const std::uint32_t mail_index)
             {
                 AsyncSendFetchCmd(mail_index, yield);
                 ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                    m_smart_socket->AsyncReadCoroutineIF(yield), ISXResponse::StatusType::OK);
 
                 promise.set_value();
             }
@@ -271,7 +272,7 @@ bool ImapClient::AsyncSendLogoutCmd(asio::yield_context& yield)
 
 bool ImapClient::AsyncSendSelectCmd(const string& folder, asio::yield_context& yield)
 {
-    std::string query = (boost::format("%1% %2% \r\n")
+    std::string query = (boost::format("A003 %1% %2%\r\n")
         % S_CMD_SELECT
         % folder).str();
 
@@ -280,7 +281,7 @@ bool ImapClient::AsyncSendSelectCmd(const string& folder, asio::yield_context& y
 
 bool ImapClient::AsyncSendFetchCmd(const std::uint32_t mail_index, asio::yield_context& yield)
 {
-    std::string query = (boost::format("%1% %2% BODY[] \r\n")
+    std::string query = (boost::format("A004 %1% %2% BODY[]\r\n")
         % S_CMD_FETCH
         % mail_index).str();
 

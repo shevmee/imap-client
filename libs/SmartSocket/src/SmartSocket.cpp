@@ -132,20 +132,58 @@ ISXResponse::IMAPResponse SmartSocket::AsyncReadCoroutineI(asio::yield_context& 
 {
     system::error_code ec;
     asio::streambuf buffer;
+    buffer.prepare(13000);
+    // std::cout << buffer.max_size() << std::endl;
 
     auto timer = StartTimer(m_timeout, yield, ec);
 
     if (!m_ssl_enabled)
     {
-        asio::async_read_until(m_socket.next_layer(), buffer, "\r\n", yield[ec]);   
+        asio::async_read_until(m_socket.next_layer(), buffer, (char)'\r', yield[ec]);   
     } else
     {
+        // m_socket.async_read_some(buffer, yield[ec]);
         asio::async_read_until(m_socket, buffer, "\r\n", yield[ec]);   
+
+        // asio::async_read(m_socket, buffer, boost::asio::transfer_all(), yield[ec]);   
     };
 
     timer->cancel();
     
     return MethodsHandlers::HandleReadI(buffer, ec);
+};
+
+ISXResponse::IMAPResponse SmartSocket::AsyncReadCoroutineIF(asio::yield_context& yield)
+{
+    boost::asio::streambuf response_buffer;
+    boost::system::error_code error;
+
+    // We assume the response fits in a reasonable buffer size
+    while (boost::asio::async_read(m_socket, response_buffer, boost::asio::transfer_at_least(1), yield[error])) {
+        bool zxc = false;
+        std::istream response_stream(&response_buffer);
+        std::string line;
+        while (std::getline(response_stream, line)) {
+            // std::cout << line << std::endl;
+
+            // End of message detected if the server completes its response
+            if (line.find(")")) {
+                zxc = true;
+                break;  // IMAP response ends with a closing parenthesis
+            }
+        }
+        if (zxc)
+            break;
+        if (error == boost::asio::error::eof) {
+            break;  // End of file (EOF) reached
+        } else if (error) {
+            throw boost::system::system_error(error);  // Handle other errors
+        }
+    }
+    std::istream is_zxc(&response_buffer);
+    std::cout << is_zxc.rdbuf() << std::endl;
+    
+    return MethodsHandlers::HandleReadI(response_buffer, error);
 };
 
 bool SmartSocket::AsyncUpgradeSecurityCoroutine(asio::yield_context& yield)
@@ -296,7 +334,7 @@ ISXResponse::IMAPResponse MethodsHandlers::HandleReadI(
         std::istream is(&buffer);
         std::stringstream response;
         response<<is.rdbuf();
-        std::cout<< "raw response: " << response.str() << " end of raw response"<<std::endl;
+        // std::cout<< "raw response: " << response.str() << " end of raw response"<<std::endl;
         ISXResponse::IMAPResponse imap_response(response.str());
         *s_log_stream << imap_response.get_formatted_response();
         // std::cout<<"OKOKOK1 "<<imap_response.get_formatted_response()<<std::endl;

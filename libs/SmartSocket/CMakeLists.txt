@@ -15,7 +15,6 @@ target_include_directories(SmartSocket PUBLIC
 )
 
 target_link_libraries(SmartSocket PUBLIC
-    SMTPResponse
     ImapResponse
 )
 if(WIN32 AND MINGW)

@@ -35,10 +35,10 @@ int main()
 
         // Select the INBOX folder
         
-        //imap_client->AsyncSelectFolder("INBOX").get();
+        imap_client->AsyncSelectFolder("INBOX").get();
 
-        // // Fetch mail with index 1 (just as an example)
-        // imap_client->AsyncFetchMail(1).get();
+        // Fetch mail with index 1 (just as an example)
+        imap_client->AsyncFetchMail(1).get();
 
         // // Optionally, search for specific emails
         // imap_client->AsyncSearchMail("UNSEEN").get();

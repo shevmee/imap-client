@@ -44,6 +44,7 @@ public:
     bool AsyncWriteCoroutine(const string& data, asio::yield_context& yield);
     ISXResponse::SMTPResponse AsyncReadCoroutine(asio::yield_context& yield);
     ISXResponse::IMAPResponse AsyncReadCoroutineI(asio::yield_context& yield);
+    ISXResponse::IMAPResponse AsyncReadCoroutineIF(asio::yield_context& yield);
     bool AsyncUpgradeSecurityCoroutine(asio::yield_context& yield);
     bool Close();
 
