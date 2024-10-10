@@ -45,8 +45,8 @@ future<void> ImapClient::AsyncConnect(const string& server, std::uint16_t port)
                 m_smart_socket->AsyncConnectCoroutine(server, port, yield);
                 
                 // For our server
-                // m_smart_socket->AsyncWriteCoroutine("STARTTLS\r\n", yield);
-                // m_smart_socket->AsyncReadCoroutineI(yield);
+                m_smart_socket->AsyncWriteCoroutine("STARTTLS\r\n", yield);
+                m_smart_socket->AsyncReadCoroutineI(yield);
 
                 m_smart_socket->AsyncUpgradeSecurityCoroutine(yield); 
 
