@@ -38,8 +38,9 @@ int main()
         imap_client->AsyncSelectFolder("INBOX").get();
 
         // Fetch mail with index 1 (just as an example)
-        imap_client->AsyncFetchMail(2).get();
-        std::cout<<"LOL"<<std::endl;
+        //imap_client->AsyncFetchMail("1").get();
+
+        //imap_client->AsyncLogout();
 
         finish(io_context, worker, imap_client);
 

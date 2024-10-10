@@ -7,6 +7,7 @@ namespace ISXResponse
         OK,
         NO,
         BAD,
+        BYE,
         Undefined
     };
 } // namespace ISXResponse

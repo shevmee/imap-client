@@ -134,7 +134,7 @@ future<void> ImapClient::AsyncSelectFolder(const string& folder)
     return future;
 }
 
-future<void> ImapClient::AsyncFetchMail(const std::uint32_t mail_index)
+future<void> ImapClient::AsyncFetchMail(const string& mail_index)
 {
     std::promise<void> promise;
     future<void> future = promise.get_future();
@@ -302,7 +302,7 @@ bool ImapClient::AsyncSendLoginCmd(asio::yield_context& yield, const string& use
 
 bool ImapClient::AsyncSendLogoutCmd(asio::yield_context& yield)
 {
-    std::string query = (boost::format("%1% %2% \r\n")
+    std::string query = (boost::format("%1% %2%\r\n")
         % m_tag
         % S_CMD_LOGOUT).str();
 
@@ -336,14 +336,20 @@ bool ImapClient::AsyncSendSelectCmd(const string& folder, asio::yield_context& y
     return m_smart_socket->AsyncWriteCoroutine(query, yield);
 }
 
-bool ImapClient::AsyncSendFetchCmd(const std::uint32_t mail_index, asio::yield_context& yield)
+bool ImapClient::AsyncSendFetchCmd(const string& mail_index, asio::yield_context& yield)
 {
-    std::string query = (boost::format("%1% %2% %3% BODY[]\r\n")
+    // std::string query = (boost::format("%1% %2% %3% BODY[]\r\n")
+    //     % m_tag
+    //     % S_CMD_FETCH
+    //     % mail_index).str();
+
+    std::string query = (boost::format("%1% %2% %3% ENVELOPE\r\n")
         % m_tag
         % S_CMD_FETCH
         % mail_index).str();
 
+
     return m_smart_socket->AsyncWriteCoroutine(query, yield);
 }
 
-}; // namespace ISXIC
+}; // namespace ISXIC  ENVELOPE

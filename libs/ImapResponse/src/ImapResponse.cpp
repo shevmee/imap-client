@@ -71,15 +71,6 @@ namespace ISXResponse
             m_status = matches[2];  // OK, NO, BAD, etc.
             m_text = matches[3];  // Remaining text message
 
-            //std::cout<<m_tag<<std::endl;
-            //std::cout<<m_status<<std::endl;
-            //std::cout<<m_text<<std::endl;
-            
-            // Determine response status
-            // if (m_tag == "*")  // Untagged response
-            // {
-            //     m_response_status = StatusType::PositiveIntermediate;
-            // }
             if (m_status == "OK")
             {
                 m_response_status = StatusType::OK;
