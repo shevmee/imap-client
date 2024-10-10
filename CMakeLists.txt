@@ -55,13 +55,13 @@ add_subdirectory(tests)
 target_link_libraries(client_imap PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
-    SmartSocket
-    Base64
+    SmartSocketI
+    Base64I
     ${Boost_LIBRARIES}
-    SMTPResponse
+    SMTPResponseI
     ImapResponse
-    MailMessage
-    MessageSender
+    MailMessageI
+    MessageSenderI
 )
 
 

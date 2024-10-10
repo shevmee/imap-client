@@ -1,8 +1,8 @@
 
-add_library(SMTPResponse STATIC
+add_library(SMTPResponseI STATIC
     src/SMTPResponse.cpp
 )
 
-target_include_directories(SMTPResponse PUBLIC
+target_include_directories(SMTPResponseI PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )

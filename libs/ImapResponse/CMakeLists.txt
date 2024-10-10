@@ -7,5 +7,5 @@ target_include_directories(ImapResponse PUBLIC
 )
 
 target_link_libraries(ImapResponse PUBLIC
-    SMTPResponse
+    SMTPResponseI
 )
