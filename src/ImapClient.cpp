@@ -44,7 +44,6 @@ future<void> ImapClient::AsyncConnect(const string& server, std::uint16_t port)
                 // Connect to the server (plain socket)
                 m_smart_socket->AsyncConnectCoroutine(server, port, yield);
                 
-
                 // For our server
                 // m_smart_socket->AsyncWriteCoroutine("STARTTLS\r\n", yield);
                 // m_smart_socket->AsyncReadCoroutineI(yield);
@@ -134,18 +133,18 @@ future<void> ImapClient::AsyncSelectFolder(const string& folder)
     return future;
 }
 
-future<void> ImapClient::AsyncFetchMail(const string& mail_index)
+future<void> ImapClient::AsyncFetchMail(const string& mail_index, const string& arg)
 {
     std::promise<void> promise;
     future<void> future = promise.get_future();
 
     asio::spawn(
         m_smart_socket->GetIoContext(),
-        [this, promise = std::move(promise), mail_index](asio::yield_context yield) mutable
+        [this, arg, promise = std::move(promise), mail_index](asio::yield_context yield) mutable
         {
             try
             {
-                AsyncSendFetchCmd(mail_index, yield);
+                AsyncSendFetchCmd(mail_index, arg, yield);
                 ISXResponse::IMAPResponse::CheckStatus(
                     m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
 
@@ -336,17 +335,18 @@ bool ImapClient::AsyncSendSelectCmd(const string& folder, asio::yield_context& y
     return m_smart_socket->AsyncWriteCoroutine(query, yield);
 }
 
-bool ImapClient::AsyncSendFetchCmd(const string& mail_index, asio::yield_context& yield)
+bool ImapClient::AsyncSendFetchCmd(const string& mail_index, const string& arg, asio::yield_context& yield)
 {
     // std::string query = (boost::format("%1% %2% %3% BODY[]\r\n")
     //     % m_tag
     //     % S_CMD_FETCH
     //     % mail_index).str();
 
-    std::string query = (boost::format("%1% %2% %3% ENVELOPE\r\n")
+    std::string query = (boost::format("%1% %2% %3% %4%\r\n")
         % m_tag
         % S_CMD_FETCH
-        % mail_index).str();
+        % mail_index
+        % arg).str();
 
 
     return m_smart_socket->AsyncWriteCoroutine(query, yield);
