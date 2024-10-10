@@ -8,7 +8,7 @@
 
 #include "StatusType.h"
 
-namespace ISXResponse
+namespace ISXResponseI
 {
     struct SplitParts {
         std::string part1;
@@ -46,6 +46,6 @@ namespace ISXResponse
         //auto SplitAtSpace(const std::string& response) const -> std::pair<std::string, std::string>;
     };
 
-} // namespace ISXResponse
+} // namespace ISXResponseI
 
 #endif // IMAPRESPONSE_H

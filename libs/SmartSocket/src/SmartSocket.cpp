@@ -4,7 +4,7 @@
 #include <boost/asio/steady_timer.hpp>
 #include <memory>
 
-namespace ISXSmartSocket
+namespace ISXSmartSocketI
 {
 SmartSocket::SmartSocket(asio::io_context& io_context, asio::ssl::context& ssl_context)
     : m_io_context(io_context)
@@ -108,7 +108,7 @@ bool SmartSocket::AsyncWriteCoroutine(const string& data, asio::yield_context& y
     return MethodsHandlers::HandleWrite(data, ec);
 };
 
-ISXResponse::SMTPResponse SmartSocket::AsyncReadCoroutine(asio::yield_context& yield)
+ISXResponseI::SMTPResponse SmartSocket::AsyncReadCoroutine(asio::yield_context& yield)
 {
     system::error_code ec;
     asio::streambuf buffer;
@@ -128,7 +128,7 @@ ISXResponse::SMTPResponse SmartSocket::AsyncReadCoroutine(asio::yield_context& y
     return MethodsHandlers::HandleRead(buffer, ec);
 };
 
-ISXResponse::IMAPResponse SmartSocket::AsyncReadCoroutineI(asio::yield_context& yield)
+ISXResponseI::IMAPResponse SmartSocket::AsyncReadCoroutineI(asio::yield_context& yield)
 {
     system::error_code ec;
     asio::streambuf buffer;
@@ -246,7 +246,7 @@ bool MethodsHandlers::HandleWrite(
     return false;
 };
 
-ISXResponse::SMTPResponse MethodsHandlers::HandleRead(
+ISXResponseI::SMTPResponse MethodsHandlers::HandleRead(
     boost::asio::streambuf& buffer
     , const boost::system::error_code& error_code)
 {
@@ -267,7 +267,7 @@ ISXResponse::SMTPResponse MethodsHandlers::HandleRead(
             std::ostream_iterator<char>(response)
         );
         
-        ISXResponse::SMTPResponse smtp_response(response.str());
+        ISXResponseI::SMTPResponse smtp_response(response.str());
         *s_log_stream << smtp_response.get_formated_response();
 
         return smtp_response;
@@ -277,7 +277,7 @@ ISXResponse::SMTPResponse MethodsHandlers::HandleRead(
     HandleError("Reading error", error_code);
 };
 
-ISXResponse::IMAPResponse MethodsHandlers::HandleReadI(
+ISXResponseI::IMAPResponse MethodsHandlers::HandleReadI(
     boost::asio::streambuf& buffer
     , const boost::system::error_code& error_code)
 {
@@ -297,7 +297,7 @@ ISXResponse::IMAPResponse MethodsHandlers::HandleReadI(
         std::stringstream response;
         response<<is.rdbuf();
         std::cout<< "raw response: " << response.str() << " end of raw response"<<std::endl;
-        ISXResponse::IMAPResponse imap_response(response.str());
+        ISXResponseI::IMAPResponse imap_response(response.str());
         *s_log_stream << imap_response.get_formatted_response();
         // std::cout<<"OKOKOK1 "<<imap_response.get_formatted_response()<<std::endl;
         return imap_response;

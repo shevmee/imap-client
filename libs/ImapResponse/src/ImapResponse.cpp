@@ -1,7 +1,7 @@
 #include "ImapResponse.h"
 #include <iostream>
 
-namespace ISXResponse
+namespace ISXResponseI
 {
     IMAPResponse::IMAPResponse(const std::string response)
     {

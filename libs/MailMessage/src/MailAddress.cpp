@@ -1,6 +1,6 @@
 #include "MailAddress.h"
 
-namespace ISXMM
+namespace ISXMMI
 {
 MailAddress::MailAddress(const std::string& address, const std::string& name): m_address(address), m_name(name){}
 

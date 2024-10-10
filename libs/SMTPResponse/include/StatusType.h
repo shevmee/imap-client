@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ISXResponse
+namespace ISXResponseI
 {
     enum class StatusType
     {

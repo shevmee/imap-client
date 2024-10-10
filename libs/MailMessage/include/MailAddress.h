@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace ISXMM
+namespace ISXMMI
 {
 class MailAddress
 {

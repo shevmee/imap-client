@@ -6,7 +6,7 @@
 
 #include "StatusType.h"
 
-namespace ISXResponse
+namespace ISXResponseI
 {
 class SMTPResponse {
 public:
@@ -37,4 +37,4 @@ private:
     std::string m_raw_response;
     StatusType m_status;
 };
-} // namespace ISXResponse
+} // namespace ISXResponseI

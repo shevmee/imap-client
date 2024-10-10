@@ -1,6 +1,6 @@
 #include "Base64.h"
 
-namespace ISXBase64
+namespace ISXBase64I
 {
     string Base64Encode(const string& decoded)
     {
@@ -17,4 +17,4 @@ namespace ISXBase64
         boost::beast::detail::base64::decode(decoded_output.data(), encoded.data(), encoded.size());
         return decoded_output;
     };
-}; // namespace ISXBase64
+}; // namespace ISXBase64I

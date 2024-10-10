@@ -9,7 +9,7 @@
 namespace ISXSC
 {
 SmtpClient::SmtpClient(asio::io_context& io_context, asio::ssl::context& ssl_context)
-    : m_smart_socket(std::make_unique<ISXSmartSocket::SmartSocket>(io_context, ssl_context))
+    : m_smart_socket(std::make_unique<ISXSmartSocketI::SmartSocket>(io_context, ssl_context))
     , m_timeout(S_DEFAULT_TIMEOUT)
 {
     m_smart_socket->SetTimeout(S_DEFAULT_TIMEOUT);
@@ -45,16 +45,16 @@ future<void> SmtpClient::AsyncConnect(const string& server, std::uint16_t port)
             try
             {
                 m_smart_socket->AsyncConnectCoroutine(server, port, yield);
-                ISXResponse::SMTPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveCompletion);
+                ISXResponseI::SMTPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponseI::StatusType::PositiveCompletion);
             
                 AsyncSendEhloCmd(yield);
-                ISXResponse::SMTPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveCompletion);
+                ISXResponseI::SMTPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponseI::StatusType::PositiveCompletion);
             
                 AsyncSendStartTlsCmd(yield);
-                ISXResponse::SMTPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveCompletion);
+                ISXResponseI::SMTPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponseI::StatusType::PositiveCompletion);
             
                 AsyncUpgradeSecurity(yield);
 
@@ -75,7 +75,7 @@ future<void> SmtpClient::AsyncRegister(const string& username, const string& pas
     future<void> future = promise.get_future();
 
     std::string register_string = '\0' + username + '\0' + password;
-    std::string encoded_register_string = ISXBase64::Base64Encode(register_string);
+    std::string encoded_register_string = ISXBase64I::Base64Encode(register_string);
 
     std::string query = (format("%1% %2% \r\n")
         % S_CMD_REGISTER
@@ -89,8 +89,8 @@ future<void> SmtpClient::AsyncRegister(const string& username, const string& pas
             try
             {
                 m_smart_socket->AsyncWriteCoroutine(query, yield);
-                ISXResponse::SMTPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveCompletion);
+                ISXResponseI::SMTPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponseI::StatusType::PositiveCompletion);
 
                 promise.set_value();
             }
@@ -112,7 +112,7 @@ future<void> SmtpClient::AsyncAuthenticate(const string& username, const string&
     m_username = username;
     m_password = password;
     std::string auth_string = '\0' + username + '\0' + password;
-    std::string encoded_auth_string = ISXBase64::Base64Encode(auth_string);
+    std::string encoded_auth_string = ISXBase64I::Base64Encode(auth_string);
 
     std::string query = (format("%1% %2% \r\n")
         % S_CMD_AUTH_PLAIN
@@ -126,8 +126,8 @@ future<void> SmtpClient::AsyncAuthenticate(const string& username, const string&
             try
             {
                 m_smart_socket->AsyncWriteCoroutine(query, yield);
-                ISXResponse::SMTPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveCompletion);
+                ISXResponseI::SMTPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponseI::StatusType::PositiveCompletion);
 
                 promise.set_value();
             }
@@ -141,7 +141,7 @@ future<void> SmtpClient::AsyncAuthenticate(const string& username, const string&
     return future;
 };
 
-future<void> SmtpClient::AsyncSendMail(const ISXMM::MailMessage& mail_message)
+future<void> SmtpClient::AsyncSendMail(const ISXMMI::MailMessage& mail_message)
 {
     std::promise<void> promise;
     future<void> future = promise.get_future();
@@ -153,32 +153,32 @@ future<void> SmtpClient::AsyncSendMail(const ISXMM::MailMessage& mail_message)
             try
             {
                 AsyncSendMailFromCmd(mail_message.from, yield);
-                ISXResponse::SMTPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveCompletion);
+                ISXResponseI::SMTPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponseI::StatusType::PositiveCompletion);
 
                 for (auto &group : {mail_message.to, mail_message.cc, mail_message.bcc})
                 {
                     for (auto& to : group)
                     {
                         AsyncSendRcptToCmd(to, yield);
-                        ISXResponse::SMTPResponse::CheckStatus(
-                            m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveCompletion);
+                        ISXResponseI::SMTPResponse::CheckStatus(
+                            m_smart_socket->AsyncReadCoroutine(yield), ISXResponseI::StatusType::PositiveCompletion);
                     }
                 }
 
                 AsyncSendDataCmd(yield);
-                ISXResponse::SMTPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveIntermediate);
+                ISXResponseI::SMTPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponseI::StatusType::PositiveIntermediate);
 
-                ISXMS::MessageSender message_sender(mail_message, [&](const string& query)
+                ISXMSI::MessageSender message_sender(mail_message, [&](const string& query)
                 {
                     return m_smart_socket->AsyncWriteCoroutine(query, yield);
                 });
                 message_sender.SendMess();
 
                 m_smart_socket->AsyncWriteCoroutine("\r\n.\r\n", yield);
-                ISXResponse::SMTPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveCompletion);
+                ISXResponseI::SMTPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponseI::StatusType::PositiveCompletion);
                 
                 promise.set_value();
             } 
@@ -205,8 +205,8 @@ future<void> SmtpClient::AsyncQuit()
             try
             {
                 AsyncSendQuitCmd(yield);
-                ISXResponse::SMTPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponse::StatusType::PositiveCompletion);
+                ISXResponseI::SMTPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutine(yield), ISXResponseI::StatusType::PositiveCompletion);
                 promise.set_value();
             }
             catch(...)
@@ -221,7 +221,7 @@ future<void> SmtpClient::AsyncQuit()
 
 bool SmtpClient::Reset()
 {
-    m_smart_socket = std::make_unique<ISXSmartSocket::SmartSocket>(
+    m_smart_socket = std::make_unique<ISXSmartSocketI::SmartSocket>(
         m_smart_socket->GetIoContext(), m_smart_socket->GetSslContext());
 
     return true;
@@ -262,7 +262,7 @@ bool SmtpClient::AsyncUpgradeSecurity(asio::yield_context& yield)
     return m_smart_socket->AsyncUpgradeSecurityCoroutine(yield);
 };
 
-bool SmtpClient::AsyncSendMailFromCmd(const ISXMM::MailAddress& mail_address, asio::yield_context& yield)
+bool SmtpClient::AsyncSendMailFromCmd(const ISXMMI::MailAddress& mail_address, asio::yield_context& yield)
 {
     string query = (format("%1%: <%2%> \r\n")
         % S_CMD_MAIL_FROM
@@ -271,7 +271,7 @@ bool SmtpClient::AsyncSendMailFromCmd(const ISXMM::MailAddress& mail_address, as
     return m_smart_socket->AsyncWriteCoroutine(query, yield);
 };
 
-bool SmtpClient::AsyncSendRcptToCmd(const ISXMM::MailAddress& mail_address, asio::yield_context& yield)
+bool SmtpClient::AsyncSendRcptToCmd(const ISXMMI::MailAddress& mail_address, asio::yield_context& yield)
 {
 
     string query = (format("%1%: <%2%> \r\n")

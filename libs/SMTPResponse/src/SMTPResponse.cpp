@@ -1,6 +1,6 @@
 #include "SMTPResponse.h"
 
-namespace ISXResponse
+namespace ISXResponseI
 {
     SMTPResponse::SMTPResponse(const std::string& response) 
     {

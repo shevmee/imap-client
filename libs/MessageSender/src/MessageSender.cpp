@@ -1,9 +1,9 @@
 #include "MessageSender.h"
 
-namespace ISXMS
+namespace ISXMSI
 {
 
-MessageSender::MessageSender(const ISXMM::MailMessage& message, std::function<bool(const std::string&)> send)
+MessageSender::MessageSender(const ISXMMI::MailMessage& message, std::function<bool(const std::string&)> send)
     : m_message(message), m_send(send) {}
 
 bool MessageSender::SendMess()
@@ -22,12 +22,12 @@ bool MessageSender::SendFile(const std::filesystem::path& file_path)
     file.open(file_path);
 
     if (!file) return false;
-    if (std::filesystem::file_size(file_path) > ISXMM::MailAttachment::S_MAX_SIZE) return false;
+    if (std::filesystem::file_size(file_path) > ISXMMI::MailAttachment::S_MAX_SIZE) return false;
 
     while (!file.eof())
     {
         file.read(buffer.data(), buffer.size());
-        std::string encoded_buffer = ISXBase64::Base64Encode(std::string(buffer.begin(), buffer.begin() + file.gcount())) + "\r\n";
+        std::string encoded_buffer = ISXBase64I::Base64Encode(std::string(buffer.begin(), buffer.begin() + file.gcount())) + "\r\n";
         result &= m_send(encoded_buffer);
     };
     return result;
@@ -42,23 +42,23 @@ bool MessageSender::SendAttachments()
             
         for (auto& attachment : m_message.attachments)
         {
-            m_send("--" + ISXMM::MailMessageFormatter::boundary + "\r\n");
-            m_send(ISXMM::MailMessageFormatter::MailAttachmentHeaders(attachment));
+            m_send("--" + ISXMMI::MailMessageFormatter::boundary + "\r\n");
+            m_send(ISXMMI::MailMessageFormatter::MailAttachmentHeaders(attachment));
             result &= SendFile(attachment.get_path());
         };
-        result &= m_send("--" + ISXMM::MailMessageFormatter::boundary + "--\r\n");
+        result &= m_send("--" + ISXMMI::MailMessageFormatter::boundary + "--\r\n");
 
         return result;
     };
 
 bool MessageSender::SendMailHeaders()
 {
-     return m_send(ISXMM::MailMessageFormatter::MailHeaders(m_message));
+     return m_send(ISXMMI::MailMessageFormatter::MailHeaders(m_message));
 }
 
 bool MessageSender::SendMailBody()
 {
-    return m_send(ISXMM::MailMessageFormatter::MailBody(m_message));
+    return m_send(ISXMMI::MailMessageFormatter::MailBody(m_message));
 }
 
 }; // namespace ISXMS

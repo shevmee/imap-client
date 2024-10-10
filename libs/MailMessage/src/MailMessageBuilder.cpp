@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace ISXMM
+namespace ISXMMI
 {
 MailMessageBuilder& MailMessageBuilder::set_from(const std::string& email, const std::string& name)
 {

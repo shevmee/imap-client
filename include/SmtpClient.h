@@ -37,7 +37,7 @@ public:
     future<void> AsyncConnect(const string& server, std::uint16_t port);
     future<void> AsyncRegister(const string& username, const string& password);
     future<void> AsyncAuthenticate(const string& username, const string& password);
-    future<void> AsyncSendMail(const ISXMM::MailMessage& mail_message);
+    future<void> AsyncSendMail(const ISXMMI::MailMessage& mail_message);
     future<void> AsyncQuit();
 
     bool Reset();
@@ -48,15 +48,15 @@ public:
 
 private:
 
-    std::unique_ptr<ISXSmartSocket::SmartSocket> m_smart_socket;
+    std::unique_ptr<ISXSmartSocketI::SmartSocket> m_smart_socket;
 
     string m_username;
     string m_password;
 
     int m_timeout;
 
-    bool AsyncSendMailFromCmd(const ISXMM::MailAddress& mail_message, asio::yield_context& yield);
-    bool AsyncSendRcptToCmd(const ISXMM::MailAddress& mail_address, asio::yield_context& yield);
+    bool AsyncSendMailFromCmd(const ISXMMI::MailAddress& mail_message, asio::yield_context& yield);
+    bool AsyncSendRcptToCmd(const ISXMMI::MailAddress& mail_address, asio::yield_context& yield);
     bool AsyncSendDataCmd(asio::yield_context& yield);
     bool AsyncSendQuitCmd(asio::yield_context& yield);
 
