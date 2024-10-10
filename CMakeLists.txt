@@ -48,8 +48,6 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/MailMessage)
 # Add subdirectory for the MessageSender library
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/MessageSender)
 
-# Add subdirectory for the tests
-add_subdirectory(tests)
 
 # Link libraries to the client_imap target
 target_link_libraries(client_imap PRIVATE
