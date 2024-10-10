@@ -145,9 +145,15 @@ future<void> ImapClient::AsyncFetchMail(const string& mail_index, const string& 
             try
             {
                 AsyncSendFetchCmd(mail_index, arg, yield);
+
+                ISXResponseI::IMAPResponse response = m_smart_socket->AsyncReadCoroutineI(yield);
+
                 ISXResponseI::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponseI::StatusType::OK);
-                m_smart_socket->AsyncReadCoroutineI(yield);
+                    response, ISXResponseI::StatusType::OK);
+
+                m_fetches.push_back(response.get_formatted_response());
+
+                //m_smart_socket->AsyncReadCoroutineI(yield);
 
                 IncrementTag();
                 promise.set_value();
@@ -354,12 +360,7 @@ bool ImapClient::AsyncSendFetchCmd(const string& mail_index, const string& arg, 
 }
 
 std::vector<string> ImapClient::getInbox(){
-    std::vector<string> res;
-    res.push_back("\"FROM \"user1@gmail.com\" TO \"\" SUBJECT \"Hello, Bob1!\" SENT \"2024-10-08 12:42:21.048078\"\"");
-    res.push_back("\"FROM \"user2@gmail.com\" TO \"\" SUBJECT \"Hello, Bob2!\" SENT \"2024-11-08 12:42:21.048078\"\"");
-    res.push_back("\"FROM \"user3@gmail.com\" TO \"\" SUBJECT \"Hello, Bob3!\" SENT \"2024-12-08 12:42:21.048078\"\"");
-
-    return res;
+    return m_fetches;
 }
 
 

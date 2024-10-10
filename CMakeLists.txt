@@ -12,7 +12,7 @@ find_package(OpenSSL REQUIRED)
 find_package(Boost 1.70 REQUIRED COMPONENTS system coroutine)
 
 # Add executable target
-add_library(client_imap)
+add_executable(client_imap)
 
 # Specify source files
 target_sources(client_imap PRIVATE

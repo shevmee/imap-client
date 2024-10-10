@@ -52,6 +52,7 @@ public:
     bool Dispose();
     bool ConnectionIsOpen();
     bool SetTimeout(int timeout);
+    std::vector<string> getInbox();
 
 private:
     unique_ptr<ISXSmartSocketI::SmartSocket> m_smart_socket;
@@ -60,6 +61,7 @@ private:
     string m_password;
     string m_current_folder;
     string m_tag = "A000";
+    std::vector<string> m_fetches;
 
     void IncrementTag();
 
@@ -71,6 +73,5 @@ private:
     bool AsyncSendCapabilityCmd(asio::yield_context& yield);
     bool AsyncSendSelectCmd(const string& folder, asio::yield_context& yield);
     bool AsyncSendFetchCmd(const string& mail_index, const string& arg, asio::yield_context& yield);
-    std::vector<string> getInbox();
 };
 }; // namespace ISXIC
