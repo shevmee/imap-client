@@ -46,6 +46,8 @@ public:
     future<void> AsyncBye();
     future<void> AsyncCapability();
 
+    std::string test() { return "imap";}
+
     bool Reset();
     bool Dispose();
     bool ConnectionIsOpen();
