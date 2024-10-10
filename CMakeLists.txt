@@ -12,17 +12,17 @@ find_package(OpenSSL REQUIRED)
 find_package(Boost 1.70 REQUIRED COMPONENTS system coroutine)
 
 # Add executable target
-add_library(client)
+add_library(client_imap)
 
 # Specify source files
-target_sources(client PRIVATE
+target_sources(client_imap PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/SmtpClient.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ImapClient.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
-# Include directories for the client target
-target_include_directories(client PRIVATE
+# Include directories for the client_imap target
+target_include_directories(client_imap PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${Boost_INCLUDE_DIRS}
 )
@@ -51,8 +51,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/MessageSender)
 # Add subdirectory for the tests
 add_subdirectory(tests)
 
-# Link libraries to the client target
-target_link_libraries(client PRIVATE
+# Link libraries to the client_imap target
+target_link_libraries(client_imap PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
     SmartSocket
