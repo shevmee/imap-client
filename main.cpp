@@ -30,9 +30,9 @@ int main()
     {
         // Connect and authenticate to the IMAP server
         //imap_client->AsyncConnect("127.0.0.1", 2525).get();
-        imap_client->AsyncConnect("imap.gmail.com", 993).get();
+        imap_client->AsyncConnect("localhost", 2525).get();
         //imap_client->AsyncCapability();
-        imap_client->AsyncLogin("misharust2004@gmail.com", "\"vssp dsoj swwg htol\"").get();
+        imap_client->AsyncLogin("user@gmail.com", "password").get();
         // Select the INBOX folder
         
         imap_client->AsyncSelectFolder("INBOX").get();

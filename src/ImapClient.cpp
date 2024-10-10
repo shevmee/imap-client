@@ -43,18 +43,17 @@ future<void> ImapClient::AsyncConnect(const string& server, std::uint16_t port)
             {
                 // Connect to the server (plain socket)
                 m_smart_socket->AsyncConnectCoroutine(server, port, yield);
+                m_smart_socket->AsyncReadCoroutineI(yield);
                 
-
                 // For our server
-                // m_smart_socket->AsyncWriteCoroutine("STARTTLS\r\n", yield);
-                // m_smart_socket->AsyncReadCoroutineI(yield);
+                m_smart_socket->AsyncWriteCoroutine("A001 STARTTLS\r\n", yield);
+                m_smart_socket->AsyncReadCoroutineI(yield);
 
                 m_smart_socket->AsyncUpgradeSecurityCoroutine(yield); 
 
                 // Once SSL is established, read the server's greeting (IMAP servers send a greeting)
-                ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
-                    
+                m_smart_socket->AsyncReadCoroutineI(yield);
+                
                 AsyncSendCapabilityCmd(yield);
                 IncrementTag();
                 m_smart_socket->AsyncReadCoroutineI(yield);
