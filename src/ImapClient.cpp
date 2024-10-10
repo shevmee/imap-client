@@ -353,4 +353,14 @@ bool ImapClient::AsyncSendFetchCmd(const string& mail_index, const string& arg, 
     return m_smart_socket->AsyncWriteCoroutine(query, yield);
 }
 
-}; // namespace ISXIC  ENVELOPE
+std::vector<string> ImapClient::getInbox(){
+    std::vector<string> res;
+    res.push_back("\"FROM \"user1@gmail.com\" TO \"\" SUBJECT \"Hello, Bob1!\" SENT \"2024-10-08 12:42:21.048078\"\"");
+    res.push_back("\"FROM \"user2@gmail.com\" TO \"\" SUBJECT \"Hello, Bob2!\" SENT \"2024-11-08 12:42:21.048078\"\"");
+    res.push_back("\"FROM \"user3@gmail.com\" TO \"\" SUBJECT \"Hello, Bob3!\" SENT \"2024-12-08 12:42:21.048078\"\"");
+
+    return res;
+}
+
+
+}; // namespace ISXIC  

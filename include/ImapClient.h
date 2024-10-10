@@ -8,6 +8,7 @@
 #include <memory>
 #include <string>
 #include <future>
+#include <vector>
 
 using namespace boost;
 using std::string;
@@ -68,5 +69,6 @@ private:
     bool AsyncSendCapabilityCmd(asio::yield_context& yield);
     bool AsyncSendSelectCmd(const string& folder, asio::yield_context& yield);
     bool AsyncSendFetchCmd(const string& mail_index, const string& arg, asio::yield_context& yield);
+    std::vector<string> getInbox();
 };
 }; // namespace ISXIC
