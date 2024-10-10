@@ -21,7 +21,7 @@ target_sources(client_imap PRIVATE
 )
 
 # Include directories for the client_imap target
-target_include_directories(client_imap PRIVATE
+target_include_directories(client_imap PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${Boost_INCLUDE_DIRS}
 )
