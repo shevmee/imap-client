@@ -35,10 +35,10 @@ int main()
         imap_client->AsyncLogin("user@gmail.com", "password").get();
         // Select the INBOX folder
         
-        imap_client->AsyncSelectFolder("INBOX").get();
+        //imap_client->AsyncSelectFolder("INBOX").get();
 
         // Fetch mail with index 1 (just as an example)
-        imap_client->AsyncFetchMail(2).get();
+        imap_client->AsyncFetchMail("1:3", "BODY[]").get();
         std::cout<<"LOL"<<std::endl;
 
         finish(io_context, worker, imap_client);

@@ -40,7 +40,7 @@ public:
     future<void> AsyncConnect(const string& server, std::uint16_t port);
     future<void> AsyncLogin(const string& username, const string& password);
     future<void> AsyncSelectFolder(const string& folder);
-    future<void> AsyncFetchMail(const std::uint32_t mail_index);
+    future<void> AsyncFetchMail(const string& mail_index, const string& arg);
     future<void> AsyncLogout();
     future<void> AsyncBye();
     future<void> AsyncCapability();
@@ -67,6 +67,6 @@ private:
     bool AsyncSendByeCmd(asio::yield_context& yield);
     bool AsyncSendCapabilityCmd(asio::yield_context& yield);
     bool AsyncSendSelectCmd(const string& folder, asio::yield_context& yield);
-    bool AsyncSendFetchCmd(const std::uint32_t mail_index, asio::yield_context& yield);
+    bool AsyncSendFetchCmd(const string& mail_index, const string& arg, asio::yield_context& yield);
 };
 }; // namespace ISXIC
