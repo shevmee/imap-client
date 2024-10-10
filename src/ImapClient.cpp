@@ -142,6 +142,7 @@ future<void> ImapClient::AsyncFetchMail(const string& mail_index, const string& 
         {
             try
             {
+                m_fetches.clear();
                 AsyncSendFetchCmd(mail_index, arg, yield);
 
                 ISXResponseI::IMAPResponse response = m_smart_socket->AsyncReadCoroutineI(yield);
