@@ -48,12 +48,12 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/MessageSender)
 target_link_libraries(client PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
-    SmartSocket
-    Base64
+    SmartSocketI
+    Base64I
     ${Boost_LIBRARIES}
-    ImapResponse
-    MailMessage
-    MessageSender
+    ImapResponseI
+    MailMessageI
+    MessageSenderI
 )
 
 
