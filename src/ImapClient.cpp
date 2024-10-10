@@ -35,37 +35,35 @@ future<void> ImapClient::AsyncConnect(const string& server, std::uint16_t port)
     std::promise<void> promise;
     future<void> future = promise.get_future();
 
-    asio::spawn(
-        m_smart_socket->GetIoContext(),
-        [this, server, port, promise = std::move(promise)](asio::yield_context yield) mutable
-        {
-            try
-            {
-                // Connect to the server (plain socket)
-                m_smart_socket->AsyncConnectCoroutine(server, port, yield);
-                
-                // For our server
-                // m_smart_socket->AsyncWriteCoroutine("STARTTLS\r\n", yield);
-                // m_smart_socket->AsyncReadCoroutineI(yield);
+    asio::spawn(m_smart_socket->GetIoContext(),
+                [this, server, port, promise = std::move(promise)](asio::yield_context yield) mutable
+                {
+                    try
+                    {
+                        // Connect to the server (plain socket)
+                        m_smart_socket->AsyncConnectCoroutine(server, port, yield);
+                        m_smart_socket->AsyncReadCoroutineI(yield);
 
-                m_smart_socket->AsyncUpgradeSecurityCoroutine(yield); 
+                        // For our server
+                        m_smart_socket->AsyncWriteCoroutine("A001 STARTTLS\r\n", yield);
+                        m_smart_socket->AsyncReadCoroutineI(yield);
 
-                // Once SSL is established, read the server's greeting (IMAP servers send a greeting)
-                ISXResponseI::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponseI::StatusType::OK);
-                    
-                AsyncSendCapabilityCmd(yield);
-                IncrementTag();
-                m_smart_socket->AsyncReadCoroutineI(yield);
+                        m_smart_socket->AsyncUpgradeSecurityCoroutine(yield);
 
-                promise.set_value();
-            }
-            catch (...)
-            {
-                promise.set_exception(std::current_exception());
-            }
-        }
-    );
+                        // Once SSL is established, read the server's greeting (IMAP servers send a greeting)
+                        m_smart_socket->AsyncReadCoroutineI(yield);
+
+                        AsyncSendCapabilityCmd(yield);
+                        IncrementTag();
+                        m_smart_socket->AsyncReadCoroutineI(yield);
+
+                        promise.set_value();
+                    }
+                    catch (...)
+                    {
+                        promise.set_exception(std::current_exception());
+                    }
+                });
 
     return future;
 }
