@@ -45,7 +45,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/MailMessage)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/MessageSender)
 
 # Link libraries to the client_imap target
-target_link_libraries(client_imap PRIVATE
+target_link_libraries(client_imap PUBLIC
     OpenSSL::SSL
     OpenSSL::Crypto
     SmartSocketI
