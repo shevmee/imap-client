@@ -17,7 +17,7 @@ using std::future;
 
 using asio::ip::tcp;
 
-namespace ISXIC
+namespace ISXICI
 {
 class ImapClient
 {
@@ -54,7 +54,7 @@ public:
     bool SetTimeout(int timeout);
 
 private:
-    unique_ptr<ISXSmartSocket::SmartSocket> m_smart_socket;
+    unique_ptr<ISXSmartSocketI::SmartSocket> m_smart_socket;
 
     string m_username;
     string m_password;

@@ -9,7 +9,7 @@
 #include "MailAddress.h"
 #include "MailAttachment.h"
 
-namespace ISXMM {
+namespace ISXMMI {
 std::string MailMessageFormatter::MailFrom(const MailAddress& from) 
 {
     if (from.get_name().empty()) 

@@ -4,10 +4,10 @@
 #include <iostream>
 #include <boost/format.hpp>
 
-namespace ISXIC
+namespace ISXICI
 {
 ImapClient::ImapClient(asio::io_context& io_context, asio::ssl::context& ssl_context)
-    : m_smart_socket(std::make_unique<ISXSmartSocket::SmartSocket>(io_context, ssl_context))
+    : m_smart_socket(std::make_unique<ISXSmartSocketI::SmartSocket>(io_context, ssl_context))
     , m_timeout(S_DEFAULT_TIMEOUT)
 {
     m_smart_socket->SetTimeout(S_DEFAULT_TIMEOUT);
@@ -51,8 +51,8 @@ future<void> ImapClient::AsyncConnect(const string& server, std::uint16_t port)
                 m_smart_socket->AsyncUpgradeSecurityCoroutine(yield); 
 
                 // Once SSL is established, read the server's greeting (IMAP servers send a greeting)
-                ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                ISXResponseI::IMAPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponseI::StatusType::OK);
                     
                 AsyncSendCapabilityCmd(yield);
                 IncrementTag();
@@ -86,8 +86,8 @@ future<void> ImapClient::AsyncLogin(const string& username, const string& passwo
             try
             {
                 AsyncSendLoginCmd(yield, username, password);
-                ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                ISXResponseI::IMAPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponseI::StatusType::OK);
 
                 IncrementTag();
                 promise.set_value();
@@ -117,8 +117,8 @@ future<void> ImapClient::AsyncSelectFolder(const string& folder)
             {
                 AsyncSendSelectCmd(folder, yield);
 
-                ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                ISXResponseI::IMAPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponseI::StatusType::OK);
 
                 IncrementTag();
                 promise.set_value();
@@ -145,8 +145,8 @@ future<void> ImapClient::AsyncFetchMail(const string& mail_index, const string& 
             try
             {
                 AsyncSendFetchCmd(mail_index, arg, yield);
-                ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                ISXResponseI::IMAPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponseI::StatusType::OK);
                 m_smart_socket->AsyncReadCoroutineI(yield);
 
                 IncrementTag();
@@ -174,8 +174,8 @@ future<void> ImapClient::AsyncLogout()
             try
             {
                 AsyncSendLogoutCmd(yield);
-                ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                ISXResponseI::IMAPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponseI::StatusType::OK);
                 promise.set_value();
             }
             catch (...)
@@ -200,8 +200,8 @@ future<void> ImapClient::AsyncCapability()
             try
             {
                 AsyncSendCapabilityCmd(yield);
-                ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                ISXResponseI::IMAPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponseI::StatusType::OK);
                     
                 IncrementTag();
                 promise.set_value();
@@ -228,8 +228,8 @@ future<void> ImapClient::AsyncBye()
             try
             {
                 AsyncSendByeCmd(yield);
-                ISXResponse::IMAPResponse::CheckStatus(
-                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                ISXResponseI::IMAPResponse::CheckStatus(
+                    m_smart_socket->AsyncReadCoroutineI(yield), ISXResponseI::StatusType::OK);
                 promise.set_value();
             }
             catch (...)
@@ -268,7 +268,7 @@ void ImapClient::IncrementTag(){
 
 bool ImapClient::Reset()
 {
-    m_smart_socket = std::make_unique<ISXSmartSocket::SmartSocket>(
+    m_smart_socket = std::make_unique<ISXSmartSocketI::SmartSocket>(
         m_smart_socket->GetIoContext(), m_smart_socket->GetSslContext());
 
     return true;

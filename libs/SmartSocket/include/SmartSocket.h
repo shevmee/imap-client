@@ -18,7 +18,7 @@ using std::string;
 using asio::ip::tcp;
 using std::function;
 
-namespace ISXSmartSocket
+namespace ISXSmartSocketI
 {
 //class MethodsHandlers;
 
@@ -42,8 +42,8 @@ public:
     bool AsyncConnectCoroutine(const string& server, int port, asio::yield_context& yield);
     bool AsyncWriteCoroutine(const string& data, asio::yield_context& yield);
     // ISXResponse::SMTPResponse AsyncReadCoroutine(asio::yield_context& yield);
-    ISXResponse::IMAPResponse AsyncReadCoroutineI(asio::yield_context& yield);
-    ISXResponse::IMAPResponse AsyncReadCoroutineIF(asio::yield_context& yield);
+    ISXResponseI::IMAPResponse AsyncReadCoroutineI(asio::yield_context& yield);
+    ISXResponseI::IMAPResponse AsyncReadCoroutineIF(asio::yield_context& yield);
     bool AsyncUpgradeSecurityCoroutine(asio::yield_context& yield);
     bool Close();
 
@@ -85,7 +85,7 @@ public:
     //     boost::asio::streambuf& buffer
     //     , const boost::system::error_code& error_code);
 
-    static ISXResponse::IMAPResponse HandleReadI(
+    static ISXResponseI::IMAPResponse HandleReadI(
         boost::asio::streambuf& buffer
         , const boost::system::error_code& error_code);
 

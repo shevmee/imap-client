@@ -5,9 +5,9 @@
 
 using std::string;
 
-namespace ISXBase64
+namespace ISXBase64I
 {
     string Base64Encode(const string& decoded);
 
     string Base64Decode(const string& encoded);
-}; // namespace ISXBase64
+}; // namespace ISXBase64I

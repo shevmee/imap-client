@@ -9,7 +9,7 @@
 #include <thread>
 
 using std::cout;
-void finish(asio::io_context& io_context, std::thread& worker, std::unique_ptr<ISXIC::ImapClient>& imap_client);
+void finish(asio::io_context& io_context, std::thread& worker, std::unique_ptr<ISXICI::ImapClient>& imap_client);
 
 int main()
 {
@@ -24,7 +24,7 @@ int main()
         io_context.run();
     });
 
-    std::unique_ptr<ISXIC::ImapClient> imap_client = std::make_unique<ISXIC::ImapClient>(io_context, ssl_context);
+    std::unique_ptr<ISXICI::ImapClient> imap_client = std::make_unique<ISXICI::ImapClient>(io_context, ssl_context);
 
     try
     {
@@ -54,7 +54,7 @@ int main()
     return 0;
 }
 
-void finish(asio::io_context& io_context, std::thread& worker, std::unique_ptr<ISXIC::ImapClient>& imap_client)
+void finish(asio::io_context& io_context, std::thread& worker, std::unique_ptr<ISXICI::ImapClient>& imap_client)
 {
     delete imap_client.release();
 

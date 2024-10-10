@@ -8,7 +8,7 @@
 
 #include "StatusType.h"
 
-namespace ISXResponse
+namespace ISXResponseI
 {
     struct SplitParts {
         std::string part1;

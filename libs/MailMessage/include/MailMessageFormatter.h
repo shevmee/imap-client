@@ -1,7 +1,7 @@
 #pragma once
 #include "MailMessageBuilder.h"
 
-namespace ISXMM
+namespace ISXMMI
 {
 namespace MailMessageFormatter
 {

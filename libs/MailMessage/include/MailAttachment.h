@@ -3,7 +3,7 @@
 #include <string>
 #include <filesystem>
 
-namespace ISXMM
+namespace ISXMMI
 {
 class MailAttachment
 {
