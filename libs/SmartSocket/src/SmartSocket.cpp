@@ -108,26 +108,6 @@ bool SmartSocket::AsyncWriteCoroutine(const string& data, asio::yield_context& y
     return MethodsHandlers::HandleWrite(data, ec);
 };
 
-// ISXResponse::SMTPResponse SmartSocket::AsyncReadCoroutine(asio::yield_context& yield)
-// {
-//     system::error_code ec;
-//     asio::streambuf buffer;
-
-//     auto timer = StartTimer(m_timeout, yield, ec);
-
-//     if (!m_ssl_enabled)
-//     {
-//         asio::async_read_until(m_socket.next_layer(), buffer, "\r\n", yield[ec]);   
-//     } else
-//     {
-//         asio::async_read_until(m_socket, buffer, "\r\n", yield[ec]);   
-//     };
-
-//     timer->cancel();
-    
-//     return MethodsHandlers::HandleRead(buffer, ec);
-// };
-
 ISXResponse::IMAPResponse SmartSocket::AsyncReadCoroutineI(asio::yield_context& yield)
 {
     system::error_code ec;
@@ -272,37 +252,6 @@ bool MethodsHandlers::HandleWrite(
     HandleError("Write error", error_code);
     return false;
 };
-
-// ISXResponse::SMTPResponse MethodsHandlers::HandleRead(
-//     boost::asio::streambuf& buffer
-//     , const boost::system::error_code& error_code)
-// {
-//     if (error_code && error_code != boost::asio::error::operation_aborted)
-//     {
-//         HandleError("Reading error 1", error_code);
-//     } else if (error_code == boost::asio::error::operation_aborted)
-//     {
-//         HandleError("Reading error 12", boost::asio::error::timed_out);
-//     };
-
-//     if(!error_code)
-//     {
-//         std::stringstream response;
-//         std::copy(
-//             boost::asio::buffers_begin(buffer.data()),
-//             boost::asio::buffers_end(buffer.data()),
-//             std::ostream_iterator<char>(response)
-//         );
-        
-//         ISXResponse::SMTPResponse smtp_response(response.str());
-//         *s_log_stream << smtp_response.get_formated_response();
-
-//         return smtp_response;
-//     };
-
-//     LogIfTimeout(error_code);
-//     HandleError("Reading error", error_code);
-// };
 
 ISXResponse::IMAPResponse MethodsHandlers::HandleReadI(
     boost::asio::streambuf& buffer

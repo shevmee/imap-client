@@ -56,20 +56,28 @@ namespace ISXResponse
             // parsing (todo next sprint)
             m_raw_response = raw_response.substr(raw_response.find("\r\n") + 2);
             is_unsolicited = true;
+        } else{
+            m_raw_response = raw_response;
         }
 
         std::smatch matches;      
 
+        //std::cout<<"RAW "<<raw_response<<"ENDRAW"<<std::endl;
+        //std::cout<<"RAWQWE "<<m_raw_response<<"ENDRAWQWE"<<std::endl;
+
         // A regex pattern that matches an IMAP response: TAG STATUS TEXT
         std::regex imapResponsePattern(R"(^(\*|\w+)\s+(OK|NO|BAD|BYE|PREAUTH|FETCH|FLAGS|EXISTS|RECENT|LIST|SEARCH|CAPABILITY|[A-Z]+)?\s*(\((?:[^\(\)]*)\)|\[.*\]|[^\r\n]*)?\r?\n?)");
         
-
         if (std::regex_match(m_raw_response, matches, imapResponsePattern))
         {
             // m_raw_response = raw_response;
             m_tag = matches[1];  // '*' for untagged or actual tag (e.g., 'A001')
             m_status = matches[2];  // OK, NO, BAD, etc.
             m_text = matches[3];  // Remaining text message
+
+            //std::cout<<"1 "<<matches[1]<<std::endl;
+            //std::cout<<"1 "<<matches[2]<<std::endl;
+            //std::cout<<"1 "<<matches[3]<<std::endl;
 
             if (m_status == "OK")
             {
@@ -90,10 +98,12 @@ namespace ISXResponse
         }
         else
         {
-            if (is_unsolicited)
+            if (is_unsolicited){
                 m_response_status = StatusType::OK;
-            else
+            }
+            else{
                 throw std::invalid_argument("Invalid response format imap");
+            }
         }
     }
 

@@ -147,6 +147,7 @@ future<void> ImapClient::AsyncFetchMail(const string& mail_index, const string& 
                 AsyncSendFetchCmd(mail_index, arg, yield);
                 ISXResponse::IMAPResponse::CheckStatus(
                     m_smart_socket->AsyncReadCoroutineI(yield), ISXResponse::StatusType::OK);
+                m_smart_socket->AsyncReadCoroutineI(yield);
 
                 IncrementTag();
                 promise.set_value();
