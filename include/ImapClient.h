@@ -41,6 +41,7 @@ public:
     future<void> AsyncFetchMail(const std::uint32_t mail_index);
     future<void> AsyncSearchMail(const string& criteria);
     future<void> AsyncLogout();
+    std::string test() { return "IMAP server";}
 
     bool Reset();
     bool Dispose();
