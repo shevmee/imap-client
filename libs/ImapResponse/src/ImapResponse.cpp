@@ -1,4 +1,4 @@
-#include "ImapResponse.h"
+#include "ImapResponseI.h"
 #include <iostream>
 
 namespace ISXResponseI

@@ -3,9 +3,9 @@
 #include <vector>
 #include <string>
 
-#include "MailAddress.h"
-#include "MailMessage.h"
-#include "MailAttachment.h"
+#include "MailAddressI.h"
+#include "MailMessageI.h"
+#include "MailAttachmentI.h"
 
 namespace ISXMMI
 {

@@ -1,4 +1,4 @@
-#include "SmartSocket.h"
+#include "SmartSocketI.h"
 
 #include <iostream>
 #include <boost/asio/steady_timer.hpp>

@@ -1,5 +1,5 @@
 #pragma once
-#include "MailMessageBuilder.h"
+#include "MailMessageBuilderI.h"
 
 namespace ISXMMI
 {

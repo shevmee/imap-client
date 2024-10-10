@@ -1,4 +1,4 @@
-#include "MessageSender.h"
+#include "MessageSenderI.h"
 
 namespace ISXMSI
 {

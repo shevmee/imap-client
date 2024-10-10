@@ -10,7 +10,7 @@
 #include <future>
 #include <iostream>
 
-#include "ImapResponse.h"
+#include "ImapResponseI.h"
 
 using namespace boost;
 

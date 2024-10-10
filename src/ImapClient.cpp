@@ -1,5 +1,5 @@
 #include "ImapClient.h"
-#include "ImapResponse.h"
+#include "ImapResponseI.h"
 
 #include <iostream>
 #include <boost/format.hpp>

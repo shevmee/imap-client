@@ -1,8 +1,8 @@
-#include "MailMessageBuilder.h"
+#include "MailMessageBuilderI.h"
 
-#include "MailAddress.h"
-#include "MailMessage.h"
-#include "MailAttachment.h"
+#include "MailAddressI.h"
+#include "MailMessageI.h"
+#include "MailAttachmentI.h"
 
 #include <iostream>
 #include <fstream>
