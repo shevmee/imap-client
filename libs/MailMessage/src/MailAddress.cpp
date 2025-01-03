@@ -1,4 +1,4 @@
-#include "MailAddressI.h"
+#include "MailAddressI.hpp"
 
 namespace ISXMMI
 {

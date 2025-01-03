@@ -1,13 +1,13 @@
-#include "MailMessageFormatterI.h"
+#include "MailMessageFormatterI.hpp"
 
 #include <vector>
 #include <string>
 #include <sstream>
 #include <iostream>
 
-#include "MailMessageI.h"
-#include "MailAddressI.h"
-#include "MailAttachmentI.h"
+#include "MailMessageI.hpp"
+#include "MailAddressI.hpp"
+#include "MailAttachmentI.hpp"
 
 namespace ISXMMI {
 std::string MailMessageFormatter::MailFrom(const MailAddress& from) 

@@ -1,5 +1,5 @@
-#include "ImapClient.h"
-#include "SmartSocketI.h"
+#include "ImapClient.hpp"
+#include "SmartSocketI.hpp"
 
 #include <iostream>
 #include <boost/asio.hpp>

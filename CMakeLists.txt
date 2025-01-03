@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.31)
 
 project(SmtpImapClient VERSION 1.0)
 
@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(OpenSSL REQUIRED)
 
 # Find Boost package with all requirements
-find_package(Boost 1.70 REQUIRED COMPONENTS system coroutine)
+find_package(Boost 1.83 REQUIRED COMPONENTS system coroutine)
 
 # Add executable target
 add_library(client_imap)
@@ -55,5 +55,3 @@ target_link_libraries(client_imap PUBLIC
     MailMessageI
     MessageSenderI
 )
-
-

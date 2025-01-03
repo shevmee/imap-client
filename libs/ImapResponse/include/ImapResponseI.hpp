@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <utility>
 
-#include "StatusTypeI.h"
+#include "StatusTypeI.hpp"
 
 namespace ISXResponseI
 {

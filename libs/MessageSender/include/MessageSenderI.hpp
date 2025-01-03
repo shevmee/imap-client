@@ -2,8 +2,8 @@
 #include <filesystem>
 #include <fstream>
 
-#include "MailMessageFormatterI.h"
-#include "Base64I.h"
+#include "MailMessageFormatterI.hpp"
+#include "Base64I.hpp"
 
 
 
